@@ -4,7 +4,7 @@
 A HTML, CSS, and JavaScript framework for Instructional Designers at University of Wisconsin Extended Campus (UWEX).
 
 ### How To Use
-1. To start, download the [framework](https://github.com/uwex-learning-tech/droplets-v3/archive/master.zip) (ZIP).
+1. To start, download the [framework](https://github.com/excelsior-university-web-systems/droplets/archive/master.zip) (ZIP).
 2. Unzip or extract the ZIP file when the download is completed.
 3. Open the `dist` folder.
 4. Inside the `assets` folder, upload the `droplets.css` and `droplets.js` files to your LMS's theme.
@@ -30,11 +30,11 @@ A HTML, CSS, and JavaScript framework for Instructional Designers at University 
 *Latest stable version is always recommended.*
 
 ### Feature requests, Bug Reporting, and Questions
-If any bugs/glitches are found in this framework, please report them on the "**[Issues](https://github.com/uwex-learning-tech/droplets-v3/issues/new/choose)**" page by selecting the **Bug report** option.
+If any bugs/glitches are found in this framework, please report them on the "**[Issues](https://github.com/excelsior-university-web-systems/droplets/issues/new/choose)**" page by selecting the **Bug report** option.
 
-For feature requests, please post them on the "**[Issues](https://github.com/uwex-learning-tech/droplets-v3/issues/new/choose)**" page by selecting the **Question** option.
+For feature requests, please post them on the "**[Issues](https://github.com/excelsior-university-web-systems/droplets/new/choose)**" page by selecting the **Question** option.
 
-For questions, please post them on the "**[Issues](https://github.com/uwex-learning-tech/droplets-v3/issues/new/choose)**" page by selecting the **Feature request** option.
+For questions, please post them on the "**[Issues](https://github.com/excelsior-university-web-systems/droplets/new/choose)**" page by selecting the **Feature request** option.
 
 ---
-&copy; 2018-2023. Ethan Lin, Learning Technology, and [University of Wisconsin Extended Campus](https://uwex.wisconsin.edu). All rights reserved.
+&copy; 2018-2024. Ethan Lin, [University of Wisconsin Extended Campus](https://uwex.wisconsin.edu), and [Excelsior University](https://www.excelsior.edu). All rights reserved.

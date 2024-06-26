@@ -12,9 +12,9 @@ module.exports = merge( common, {
 @version: ${require('./package.json').version}
 @author: Ethan Lin
 @updated on: 11-08-2023
-@url: https://github.com/uwex-learning-tech/droplets-v3
+@url: https://github.com/excelsior-university-web-systems/droplets
 @license: The MIT License (MIT)
-@copyright: (c) 2018-${new Date().getUTCFullYear()} Learning Technology, University of Wisconsin Extended Campus`,
+@copyright: (c) 2018-${new Date().getUTCFullYear()} University of Wisconsin Extended Campus and Excelsior University`,
       entryOnly: true
     } ),
   ],
