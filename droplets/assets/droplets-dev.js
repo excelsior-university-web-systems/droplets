@@ -1338,7 +1338,7 @@ function enableAnnotation( annotations ) {
 
                     const tooltip = createAnnotationTooltip( title );
 
-                    if ( xyPos.x < imgNaturalWidth - 310 ) {
+                    if ( xyPos.x < ( imgNaturalWidth / 2 ) ) {
                         tooltip.classList.add( 'right' );
                     } else {
                         tooltip.classList.add( 'left' );

@@ -3558,6 +3558,7 @@ Droplets page container. Droplets classes only work inside this container.
                         top: calc( 50% - 41.5px );
                         background-color: #CCCCCC;
                         text-align: left;
+                        line-height: normal;
                         padding: rem-unit( 10px );
                         border-radius: rem-unit(10px);
                         z-index: 0;
@@ -4525,19 +4526,19 @@ D029: Footer
 A line and some spaces beneath.
 ----------------------------------------------------------------------------- */
 
-#uws-droplets-page {
+// #uws-droplets-page {
 
-    &:after {
-        display: block;
-        border-top: rem-unit( 1px ) solid $border-color;
-        margin: rem-unit( $gutter ) 0 0 0;
-        padding: rem-unit( $gutter) 0;
-        color: $gray-color;
-        font-size: rem-unit( 12px );
-        content: " ";
-    }
+//     &:after {
+//         display: block;
+//         border-top: rem-unit( 1px ) solid $border-color;
+//         margin: rem-unit( $gutter ) 0 0 0;
+//         padding: rem-unit( $gutter) 0;
+//         color: $gray-color;
+//         font-size: rem-unit( 12px );
+//         content: " ";
+//     }
 
-}
+// }
 
 /*
 D030: FONT FACES
@@ -4880,225 +4881,4 @@ D032: NO JAVASCRIPT FALLBACK
         cursor: not-allowed;
     }
     
-}
-
-/*
-D033: LEGACY/DEPRECATED COMPONENTS
---------------------------------------------------------------------------------
-Components that are no longer to be used or should not continue to be used.
-To be rem-unitoved in future versions.
------------------------------------------------------------------------------ */
-
-#uws-droplets-page {
-    
-    /* D033.1: OLD ACCORDION */
-    
-    .droplets-accordion {
-    
-    	margin: rem-unit( $gutter ) 0;
-    
-    	.accordion-controls {
-            
-            display: flex;
-            flex-flow: row wrap;
-            justify-content: flex-end;
-            font-size: rem-unit( 12px );
-            line-height: rem-unit( 16px );
-            text-align: center;
-            padding-right: rem-unit( 8px );
-    
-            a, a:visited {
-                display: block;
-                text-decoration: none;
-                color: #000;
-                background-color: $light-gray-color;
-                padding: rem-unit( 2px ) rem-unit( 5px );
-                margin: 0 rem-unit( 8px ) rem-unit( -5px ) 0;
-                border-top-left-radius: rem-unit( 3px );
-                border-top-right-radius: rem-unit( 3px );
-            }
-    
-        }
-    
-        .accordion-title {
-            
-            position: relative;
-            display: flex;
-            flex-flow: row nowrap;
-            align-items: center;
-            flex: 1 1 95%;
-            background-color: $light-gray-color;
-            border: rem-unit( 1px ) solid $border-color;
-            padding: rem-unit( 10px ) rem-unit( 40px ) rem-unit( 10px ) rem-unit( 10px );
-            margin-top: rem-unit( 5px );
-            cursor: pointer;
-            border-radius: rem-unit( math.div($border-radius, 3) );
-            
-            a {
-                text-decoration: none;
-                color: unset;
-            }
-            
-        }
-        
-        .accordion-title:after {
-            position: absolute;
-            right: rem-unit( $gutter );
-            font-family: $droplets-icon-font;
-            content: unicode('e001');
-            color: $gray-color;
-        }
-    
-        .accordion-title:first-child {
-            margin-top: 0;
-        }
-    
-        .active {
-            border-bottom: transparent;
-            border-top-left-radius: rem-unit( 5px );
-            border-top-right-radius: rem-unit( 5px );
-            border-bottom-left-radius: 0;
-            border-bottom-right-radius: 0;
-        }
-        
-        .active:after {
-            transform: rotate(90deg);
-        }
-    
-        .accordion-content {
-            padding: 0 rem-unit( 10px );
-            display: none;
-            background-color: #fff;
-            border: rem-unit( 1px ) solid $border-color;
-            border-top-left-radius: 0;
-            border-top-right-radius: 0;
-            border-bottom-left-radius: rem-unit( 5px );
-            border-bottom-right-radius: rem-unit( 5px );
-        }
-    
-    }
-    
-    .no-arrow {
-        
-        .accordion-title:after {
-            display: none;
-        }
-        
-    }
-    
-    /* D033.2: OLD TABS */
-
-    .droplets-tabs {
-    
-    	margin: rem-unit( $gutter ) 0;
-    	clear: both;
-    
-    	.tabs {
-    
-            width: 100%;
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            border-bottom: rem-unit( 1px ) solid $border-color;
-            background-color: $light-gray-color;
-            padding: rem-unit( 8px ) rem-unit( 5px ) 0;
-            float: left;
-            clear: both;
-            border-top-left-radius: rem-unit( 3px );
-            border-top-right-radius: rem-unit( 3px );
-    
-            li {
-            
-                display: block;
-                float: left;
-                margin-bottom: rem-unit( -1px );
-                margin-right: rem-unit( 3px );
-                background-color: #fff;
-                border-top-left-radius: rem-unit( 3px );
-                border-top-right-radius: rem-unit( 3px );
-                
-                a, a:visited {
-                    display: block;
-                    padding: rem-unit( 5px ) rem-unit( 10px );
-                    text-decoration: none;
-                    color: $gray-color;
-                }
-                
-                a:hover {
-                    color: #000;
-                }
-            
-            }
-            
-            li:hover {
-            	
-                box-shadow: 0 rem-unit( -3px ) rem-unit( 2px ) 0 $gray-color;
-                
-                a {
-                    color: #000;
-                }
-            	
-            }
-            
-            .active {
-            	
-                border-top: rem-unit( 1px ) solid #929292;
-                border-right: rem-unit( 1px ) solid #929292;
-                border-left: rem-unit( 1px ) solid #929292;
-                border-bottom: transparent;
-                box-shadow: 0 rem-unit( -3px ) rem-unit( 2px ) 0 $gray-color;
-                
-                a {
-                    color: #000;
-                }
-            	
-            }
-            
-            .info {
-            	
-                background-color: $info-color;
-                
-                a, a:hover {
-                    color: #fff;
-                }
-            	
-            }
-        	
-            .danger {
-                @extend .info;
-                background-color: $danger-color;
-            }
-            
-            .success {
-                @extend .info;
-                background-color: $success-color;
-            }
-            
-            .warning {
-                @extend .info;
-                background-color: $warning-color;
-            }
-    
-    	}
-    
-    	.tab-contents {
-    
-            border-bottom: rem-unit( 1px ) solid $border-color;
-            clear: both;
-    
-            .tab-section {
-                display: none;
-                padding: rem-unit( 6px ) rem-unit( 10px ) 0;
-                background-color: #fff;
-            }
-    
-            .active {
-                display: block;
-                animation: fadeIn 1s;
-            }
-    
-    	}
-    
-    }
-
 }
