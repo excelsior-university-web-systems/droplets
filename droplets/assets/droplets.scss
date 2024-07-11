@@ -132,7 +132,7 @@ Setting up functions. Convert px unit to rem unit.
 /*
 D002: IMPORTS
 --------------------------------------------------------------------------------
-External resouce imports
+External resource imports
 ----------------------------------------------------------------------------- */
 
 @import url('https://fonts.googleapis.com/css?family=Lato:300,400,400i,700,700i&display=swap');
@@ -142,7 +142,6 @@ D003: UWS DROPLETS PAGE
 --------------------------------------------------------------------------------
 Droplets page container. Droplets classes only work inside this container.
 ----------------------------------------------------------------------------- */
-
 #uws-droplets-page {
     
     // container property
@@ -3553,10 +3552,12 @@ Droplets page container. Droplets classes only work inside this container.
         
                         display: none;
                         position: absolute;
-                        width: rem-unit( 300px );
-                        height: rem-unit( 83px );
+                        // width: rem-unit( 300px );
+                        // height: rem-unit( 83px );
+                        width: 600%;
+                        height: auto;
                         top: calc( 50% - 41.5px );
-                        background-color: #CCCCCC;
+                        background-color: #dfdfdf;
                         text-align: left;
                         line-height: normal;
                         padding: rem-unit( 10px );
@@ -3585,13 +3586,43 @@ Droplets page container. Droplets classes only work inside this container.
                     }
         
                     .tooltip.right {
-                        left: rem-unit( 15px );
-                        padding-left: rem-unit( 25px );
+
+                        left: 35px;
+                        //padding-left: 25px;
+
+                        &:after {
+                            display: block;
+                            position: absolute;
+                            content: " ";
+                            top: calc(50% - 10px);
+                            left: -9px;
+                            width: 0; 
+                            height: 0; 
+                            border-top: 10px solid transparent;
+                            border-bottom: 10px solid transparent; 
+                            border-right: 10px solid #dfdfdf; 
+                        }
+
                     }
         
                     .tooltip.left {
-                        right: rem-unit( 15px );
-                        padding-right: rem-unit( 25px );
+
+                        right: 35px;
+                        //padding-right: 25px;
+
+                        &:before {
+                            display: block;
+                            position: absolute;
+                            content: " ";
+                            top: calc(50% - 10px);
+                            right: -9px;
+                            width: 0; 
+                            height: 0; 
+                            border-top: 10px solid transparent;
+                            border-bottom: 10px solid transparent; 
+                            border-left: 10px solid #dfdfdf; 
+                        }
+
                     }
     
                     &:hover {
@@ -3639,39 +3670,57 @@ Droplets page container. Droplets classes only work inside this container.
 
         }
 
+        .commentary-panel-backdrop {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            top: 0;
+            left: 0;
+            z-index: 10;
+        }
+
         .commentary-panel {
 
             position: absolute;
-            top: 5%;
-            width: 35%;
-            height: 90%;
+            top: 0;
+            left: 0;
+            width: 50%;
+            height: auto;
             text-align: left;
-            background: #E6E6E6;
-            overflow: hidden;
+            background: #eeeeee;
             border-radius: rem-unit(10px);
             box-shadow: 0 0 rem-unit( 8px ) 0 $dark-gray-color;
             z-index: 20;
 
             .closeBtn {
 
+                display: flex;
+                align-items: center;
+                justify-content: center;
                 position: absolute;
-                top: rem-unit( 3px );
-                right: rem-unit( 3px );
+                top: -12px;
+                right: -12px;
                 border: none;
                 background-color: #666;
                 color: #fff;
                 text-align: center;
-                width: rem-unit( 15px );
-                height: rem-unit( 15px );
-                font-size: rem-unit( 14px );
+                width: 25px;
+                height: 25px;
+                font-size: 140%;
                 line-height: 0;
-                padding: 0 0 rem-unit( 2.25px ) 0;
                 border-radius: 50%;
+                padding: 0;
                 cursor: pointer;
                 transition: background-color 0.25s linear;
 
                 &:hover {
                     background-color: #000;
+                }
+
+                &:after {
+                    font-family: $droplets-icon-font;
+                    content: unicode('e004');
                 }
 
             }
@@ -3680,11 +3729,12 @@ Droplets page container. Droplets classes only work inside this container.
 
                 display: flex;
                 align-items: center;
-                background-color: #CCCCCC;
+                background-color: #dfdfdf;
                 padding: rem-unit( 10px );
                 height: rem-unit( 65px );
                 font-size: 18px;
                 font-weight: bold;
+                border-radius: rem-unit(10px) rem-unit(10px) 0 0;
 
                 .number {
                     font-size: rem-unit( 45px );
@@ -3707,13 +3757,69 @@ Droplets page container. Droplets classes only work inside this container.
 
             .body {
 
-                padding: rem-unit( 10px ) rem-unit( 10px ) 0;
-                @include calc( height, '100% - 65px' );
-                overflow-x: hidden;
-                overflow-y: scroll;
+                max-height: 200px;
+                overflow: auto;
 
-                p, ul, ol {
-                    margin: 0 0 rem-unit( 10px ) 0;
+                .content {
+
+                    padding: rem-unit( 10px );
+
+                    p, ul, ol {
+                        margin: 0 0 rem-unit( 10px ) 0;
+                    }
+
+                }
+                
+
+            }
+
+            .footer {
+
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 10px;
+
+                button  {
+
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    background-color: #666;
+                    color: #fff;
+                    text-align: center;
+                    width: 25px;
+                    height: 25px;
+                    font-size: 80%;
+                    line-height: 0;
+                    border-radius: 50%;
+                    border: 1px solid #2e2e2e;
+                    padding: 0;
+                    cursor: pointer;
+                    transition: background-color 0.25s linear;
+
+                    &:hover {
+                        background-color: #000;
+                    }
+
+                    &.prevBtn {
+                        
+                        margin-right: 10px;
+
+                        &:after {
+                            font-family: $droplets-icon-font;
+                            content: unicode('e000');
+                        }
+                        
+                    }
+
+                    &.nextBtn {
+                        &:after {
+                            font-family: $droplets-icon-font;
+                            content: unicode('e001');
+                        }
+                    }
+
                 }
 
             }
@@ -3721,27 +3827,64 @@ Droplets page container. Droplets classes only work inside this container.
         }
 
         .commentary-panel.left {
-            left: 3%;
+            &:before {
+                display: block;
+                position: absolute;
+                content: " ";
+                top: calc(50% - 10px);
+                right: -9px;
+                width: 0; 
+                height: 0; 
+                border-top: 10px solid transparent;
+                border-bottom: 10px solid transparent; 
+                border-left: 10px solid #eeeeee; 
+            }
         }
 
         .commentary-panel.right {
-            right: 3%;
+            &:after {
+                display: block;
+                position: absolute;
+                content: " ";
+                top: calc(50% - 10px);
+                left: -9px;
+                width: 0; 
+                height: 0; 
+                border-top: 10px solid transparent;
+                border-bottom: 10px solid transparent; 
+                border-right: 10px solid #eeeeee; 
+            }
         }
 
         .commentary-panel.top {
-            left: 3%;
-            width: 94%;
-            height: 35%;
+            &:after {
+                display: block;
+                position: absolute;
+                content: " ";
+                bottom: -9px;
+                left: calc(50% - 10px);
+                width: 0; 
+                height: 0; 
+                border-top: 10px solid #eeeeee;
+                border-right: 10px solid transparent; 
+                border-left: 10px solid  transparent; 
+            }
         }
 
         .commentary-panel.bottom {
-            top: unset;
-            bottom: 3%;
-            left: 3%;
-            width: 94%;
-            height: 35%;
+            &:before {
+                display: block;
+                position: absolute;
+                content: " ";
+                top: -9px;
+                left: calc(50% - 10px);
+                width: 0; 
+                height: 0; 
+                border-bottom: 10px solid #dfdfdf;
+                border-right: 10px solid transparent; 
+                border-left: 10px solid  transparent; 
+            }
         }
-
     }
 
     /*

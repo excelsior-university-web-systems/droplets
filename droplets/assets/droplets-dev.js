@@ -1309,6 +1309,7 @@ function enableAnnotation( annotations ) {
                 // get indicator position for each annotation
                 let annotationItems = annotationDiv.querySelectorAll( '.annotations .annotation-item' );
                 let annotations = [];
+                let commentaryPanelBackdrop = null;
                 let commentaryPanel = null;
 
                 Array.prototype.forEach.call( annotationItems, ( item, itemIndex ) => {
@@ -1316,6 +1317,7 @@ function enableAnnotation( annotations ) {
                     const position = item.querySelector( '.position' ).innerText;
                     const title = item.querySelector( '.title' ).innerText;
                     const commentary = item.querySelector( '.commentary' ).innerHTML;
+                    const direction = item.querySelector( '.commentary' ).getAttribute( 'data-direction' );
                     const xyRaw = position.split( ',', 2 );
                     const xyPos = {
                         'x': Number( xyRaw[0].trim() ),
@@ -1353,6 +1355,7 @@ function enableAnnotation( annotations ) {
                         'number': itemIndex + 1,
                         'unnumber': numbered,
                         'position': position,
+                        'direction': direction,
                         'title': title,
                         'commentary': commentary
                     } );
@@ -1366,9 +1369,17 @@ function enableAnnotation( annotations ) {
                         // remove any opened commentary panel first
                         if ( imgPanel.querySelector( '.commentary-panel' ) ) {
 
+                            commentaryPanelBackdrop = imgPanel.querySelector( '.commentary-panel-backdrop' );
+                            commentaryPanelBackdrop.removeEventListener( 'click', closeAnnotationCommentary );
+
                             commentaryPanel = imgPanel.querySelector( '.commentary-panel' );
+                            commentaryPanel.removeEventListener( 'click', closeAnnotationCommentary );
                             commentaryPanel.querySelector( '.closeBtn' ).removeEventListener( 'click', closeAnnotationCommentary );
+
                             imgPanel.removeChild( commentaryPanel );
+                            imgPanel.removeChild( commentaryPanelBackdrop );
+
+                            commentaryPanelBackdrop = null;
                             commentaryPanel = null;
 
                         }
@@ -1389,27 +1400,52 @@ function enableAnnotation( annotations ) {
                             } );
 
                             btn.parentNode.classList.add( 'active' );
-                            commentaryPanel = createAnnotationCommentaryPanel( annotations[btnIndex] )
+                            
+                            const commentaryPanelEl = createAnnotationCommentaryPanel( annotations[btnIndex], btnIndex );
+                            commentaryPanelBackdrop = commentaryPanelEl[0];
+                            commentaryPanel = commentaryPanelEl[1];
 
-                            if ( imgNaturalWidth > imgNaturalHeight ) {
-
-                                if ( xyPos.x < imgNaturalWidth / 2 - 50 ) {
-                                    commentaryPanel.classList.add( 'right' );
-                                } else {
-                                    commentaryPanel.classList.add( 'left' );
-                                }
-
-                            } else {
-
-                                if ( xyPos.y < imgNaturalHeight / 2 - 50 ) {
-                                    commentaryPanel.classList.add( 'bottom' );
-                                } else {
-                                    commentaryPanel.classList.add( 'top' );
-                                }
-
-                            }
-
+                            imgPanel.appendChild( commentaryPanelBackdrop );
                             imgPanel.appendChild( commentaryPanel );
+
+                            const imgClientWidth = annotationImgEl.clientWidth;
+                            const imgClientHeight = annotationImgEl.clientHeight;
+
+                            const leftPercentage = toPercentage( xyPos.x , imgNaturalWidth );
+                            const topPercentage = toPercentage( xyPos.y , imgNaturalHeight );
+                            const baseLeft = leftPercentage / 100 * imgClientWidth;
+                            const baseTop = topPercentage / 100 * imgClientHeight;
+                            const gutter = 10;
+
+                            commentaryPanel.style.top = toPercentage( baseTop - commentaryPanel.offsetHeight / 2, imgClientHeight ) + '%';
+
+                            switch ( direction ) {
+                                case 'top':
+                                    commentaryPanel.style.top = toPercentage( baseTop - commentaryPanel.offsetHeight - gutter, imgClientHeight ) + '%';
+                                    commentaryPanel.style.left = toPercentage( baseLeft - commentaryPanel.offsetWidth / 2, imgClientWidth ) + '%';
+                                    break;
+                                case 'left':
+                                    commentaryPanel.style.left = 'unset';
+                                    commentaryPanel.style.right = ( 100 - toPercentage( baseLeft - gutter, imgClientWidth ) ) + '%';
+                                    break;
+                                case 'right':
+                                    commentaryPanel.style.left = toPercentage( baseLeft + gutter, imgClientWidth ) + '%';
+                                    break;
+                                case 'bottom':
+                                    commentaryPanel.style.top = toPercentage( baseTop + gutter, imgClientHeight ) + '%';
+                                    commentaryPanel.style.left = toPercentage( baseLeft - commentaryPanel.offsetWidth / 2, imgClientWidth ) + '%';
+                                    break;
+                                default:
+                                    if ( xyPos.x < imgClientWidth / 2 ) {
+                                        commentaryPanel.classList.add( 'right' );
+                                        commentaryPanel.style.left = toPercentage( baseLeft + gutter, imgClientWidth ) + '%';
+                                    } else {
+                                        commentaryPanel.classList.add( 'left' );
+                                        commentaryPanel.style.left = 'unset';
+                                        commentaryPanel.style.right = ( 100 - toPercentage( baseLeft - gutter, imgClientWidth ) ) + '%';
+                                    }
+                                    break;
+                            }
 
                         }
 
@@ -1842,21 +1878,31 @@ function toPercentage( numerator, denominator ) {
  /**
  * Helper function to create annotation commentary panel
  * @function createAnnotationCommentaryPanel
- * @param {Object} annotation - an annotation object.
+ * @param {Object, number} annotation - an annotation object and an index number.
  * @return {Node}
  * @since 3.1.0
  */
-function createAnnotationCommentaryPanel( annotation ) {
+function createAnnotationCommentaryPanel( annotation, index ) {
+
+    const backdrop = document.createElement( 'div' );
+    backdrop.classList.add( 'commentary-panel-backdrop' );
 
     const panel = document.createElement( 'div' );
     panel.classList.add( 'commentary-panel' );
+
+    if ( annotation.direction ) {
+        panel.classList.add( annotation.direction );
+    }
+
+    panel.setAttribute( 'data-index', index );
     panel.setAttribute( 'aria-hidden', 'true' );
 
     const closeBtn = document.createElement( 'button' );
     closeBtn.classList.add( 'closeBtn' );
-    closeBtn.innerHTML = '&times;';
+    closeBtn.title = 'Close';
 
-    closeBtn.addEventListener( 'click', closeAnnotationCommentary );
+    closeBtn.addEventListener( 'click', closeAnnotationCommentary, {once: true} );
+    backdrop.addEventListener( 'click', closeAnnotationCommentary, {once: true} );
 
     const headDiv = document.createElement( 'div' );
     headDiv.classList.add( 'head' );
@@ -1873,7 +1919,29 @@ function createAnnotationCommentaryPanel( annotation ) {
 
     const bodyDiv = document.createElement( 'div' );
     bodyDiv.classList.add( 'body' );
-    bodyDiv.innerHTML = annotation.commentary;
+
+    const bodyContentDiv = document.createElement( 'div' );
+    bodyContentDiv.classList.add( 'content' );
+    bodyContentDiv.innerHTML = annotation.commentary;
+
+    bodyDiv.appendChild( bodyContentDiv );
+
+    const footerDiv = document.createElement( 'div' );
+    footerDiv.classList.add( 'footer' );
+
+    const footerNextBtn = document.createElement( 'button' );
+    footerNextBtn.classList.add( 'nextBtn' );
+    footerNextBtn.title = 'Next';
+    
+    const footerPrevBtn = document.createElement( 'button' );
+    footerPrevBtn.classList.add( 'prevBtn' );
+    footerPrevBtn.title = 'Previous';
+
+    footerPrevBtn.addEventListener( 'click', goToCommentary, {once: true} );
+    footerNextBtn.addEventListener( 'click', goToCommentary, {once: true} );
+
+    footerDiv.appendChild( footerPrevBtn );
+    footerDiv.appendChild( footerNextBtn );
 
     headDiv.appendChild( headNum );
     headDiv.appendChild( headTitle );
@@ -1881,8 +1949,39 @@ function createAnnotationCommentaryPanel( annotation ) {
     panel.appendChild( closeBtn );
     panel.appendChild( headDiv );
     panel.appendChild( bodyDiv );
+    panel.appendChild( footerDiv );
 
-    return panel;
+    return [backdrop, panel];
+
+ }
+
+/**
+ * Helper function to navigate annotation commentary panel
+ * @function goToCommentary
+ * @param {Event} evt - an event.
+ * @since 3.3.3
+ */
+
+ function goToCommentary( evt ) {
+    
+    const direction = evt.currentTarget.className;
+    const currentIndex = evt.currentTarget.parentNode.parentNode.getAttribute( 'data-index' );
+    const currentImgPanel = evt.currentTarget.parentNode.parentNode.parentNode;
+    const indicatorBtns = currentImgPanel.querySelectorAll( '.indicator .dot' );
+    let index = Number( currentIndex );
+
+    if ( direction === 'nextBtn' ) {
+        index = (index + 1) <= (indicatorBtns.length - 1) ? index + 1 : 0;
+    }
+
+    if ( direction === 'prevBtn' ) {
+        index = (index - 1) >= 0 ? index - 1 : indicatorBtns.length - 1;
+    }
+
+    indicatorBtns[index].click();
+
+    evt.preventDefault();
+    return false;
 
  }
 
@@ -1895,7 +1994,19 @@ function createAnnotationCommentaryPanel( annotation ) {
 
  function closeAnnotationCommentary( evt ) {
 
-    evt.target.parentNode.parentNode.querySelectorAll( '.indicators .indicator' ).forEach( ( indicator ) => {
+    let parentEl = evt.target.parentNode.parentNode;
+    let siblingEl = evt.currentTarget.parentNode.previousSibling;
+    let siblingTargetEl = evt.target.parentNode.previousSibling;
+    let targetEl = evt.target.parentNode;
+
+    if ( evt.target.classList.contains( 'commentary-panel-backdrop' ) ) {
+        parentEl = evt.target.parentNode;
+        siblingEl = evt.currentTarget.nextSibling.querySelector( '.closeBtn' );
+        siblingTargetEl = evt.target.nextSibling;
+        targetEl = evt.target;
+    }
+
+    parentEl.querySelectorAll( '.indicators .indicator' ).forEach( ( indicator ) => {
                                 
         if ( indicator.classList.contains( 'active') ) {
             indicator.classList.remove( 'active' );
@@ -1904,7 +2015,12 @@ function createAnnotationCommentaryPanel( annotation ) {
     } );
 
     evt.currentTarget.removeEventListener( 'click', closeAnnotationCommentary );
-    evt.target.parentNode.parentNode.removeChild( evt.target.parentNode );
+    siblingEl.removeEventListener( 'click', closeAnnotationCommentary );
+    parentEl.removeChild( siblingTargetEl );
+    parentEl.removeChild( targetEl );
+
+    evt.preventDefault();
+    return false;
 
  }
 
