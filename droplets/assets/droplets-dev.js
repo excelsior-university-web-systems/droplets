@@ -33,77 +33,6 @@ if ( document.readyState != 'loading' ) {
 
 }
 
-// if ( isCanvasLms() && isCanvasEditPage() ) {
-
-//     const canvasEditorParam = {
-//         class: 'tox-edit-area__iframe',
-//         parent: document.querySelector( '#main' ) ? document.querySelector( '#main' ) : document.querySelector( 'body' ),
-//         recursive: true,
-//         done: function () {
-            
-//             const canvasEditor = document.getElementsByClassName( 'tox-edit-area__iframe' )[0];
-    
-//             if ( canvasEditor ) {
-    
-//                 const canvasEditorDoc = canvasEditor.contentDocument || canvasEditor.contentWindow.document;
-//                 const docHead = canvasEditorDoc.querySelector( 'head' );
-    
-//                 if ( docHead ) {
-
-//                     const dropletsCss = document.createElement( 'link' );
-
-//                     dropletsCss.rel = 'stylesheet';
-//                     dropletsCss.href = 'https://instructure-uploads.s3.amazonaws.com/account_118300000000000001/attachments/62012174/droplets.css';
-//                     dropletsCss.type = 'text/css';
-//                     docHead.appendChild(dropletsCss);
-
-//                     const dropletsJs = document.createElement( 'script' );
-                    
-//                     dropletsJs.src = 'https://instructure-uploads.s3.amazonaws.com/account_118300000000000001/attachments/62019220/droplets.js';
-//                     docHead.appendChild(dropletsJs);
-
-//                 }
-    
-//             }
-    
-//         }
-//     };
-
-//     waitForCanvasEditor( canvasEditorParam );
-
-// }
-
-// function isCanvasEditPage( ) {
-    
-//     if ( location.pathname.match( /\/edit|new/ ) ) {
-//         return true;
-//     }
-    
-//     return false;
-    
-// }
-
-// function waitForCanvasEditor( params ) {   
-    
-//     new MutationObserver( function() {
-
-//         const el = document.getElementsByClassName( params.class )[0];
-        
-//         if ( el ) {
-//             this.disconnect();
-//             params.done();
-//         }
-
-//     } ).observe( params.parent || document, {
-
-//         attributes: true,
-//         subtree: true,
-//         childList: true
-
-//     } );
-
-// }
-
 /*********************************************************
   MUTATION OBSERVER FUNCTION 
 **********************************************************/
@@ -137,7 +66,7 @@ function waitForDroplets( params ) {
     // trigger the observer to at least once detect a change in the DOM
     const el = document.querySelector( '#main' ) ? document.querySelector( '#main' ) : document.querySelector( 'body' );
 
-    el.setAttribute( 'data-droplets', 'dropletjs-loaded' );
+    el.setAttribute( 'data-droplets', 'dropletsjs-loaded' );
 
 }
 
@@ -193,7 +122,7 @@ function isCanvasLms() {
  */
 function onCanvasLms() {
 
-    const dropletsPage = document.getElementById( 'uws-droplets-page' );
+    const dropletsPage = document.getElementById( dropletsParam.id );
     
     if ( dropletsPage != undefined ) {
         
@@ -239,7 +168,7 @@ function isAllowedCanvasPage( ) {
 function checkDropletsComponents() {
 
     // set initial page container x and y as data- attributes
-    const page = document.getElementById( 'uws-droplets-page' );
+    const page = document.getElementById( dropletsParam.id );
 
     // exit function if no-js class is set
     if ( page.classList.contains( 'no-js' ) ) {
@@ -938,7 +867,7 @@ function enableImgZoom( imgZooms ) {
             const nativeHeight = img.getAttribute( 'data-height' );
             
             // get positions
-            const page = document.getElementById( 'uws-droplets-page' );
+            const page = document.getElementById( dropletsParam.id );
             const pageX = Number( page.getAttribute( 'data-x' ) );
             const pageY = Number( page.getAttribute( 'data-y' ) );
             const magnifyX = evt.pageX - pageX - this.offsetLeft;
@@ -982,7 +911,7 @@ function enableImgZoom( imgZooms ) {
 function enableLightbox( lightboxes ) {
 
     // get page element
-    const page = document.getElementById( 'uws-droplets-page' );
+    const page = document.getElementById( dropletsParam.id );
     
     // create overlay element and its controls
     const overlayDiv = document.createElement( 'div' );
@@ -1762,7 +1691,7 @@ function enableSlideshow( slideshow ) {
  function enableSpeak( speak ) {
 
     // created the shared audio player
-    const page = document.getElementById( 'uws-droplets-page' );
+    const page = document.getElementById( dropletsParam.id );
     const audioPlayer = document.createElement( 'audio' );
     
     audioPlayer.setAttribute( 'aria-hidden', true );
