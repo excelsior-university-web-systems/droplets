@@ -1,5 +1,5 @@
 # DROPLETS
-**version 3.3.3**  
+**version 3.3.4**  
 
 A HTML, CSS, and JavaScript framework for Instructional Designers at University of Wisconsin Extended Campus (UWEX).
 
@@ -37,4 +37,4 @@ For feature requests, please post them on the "**[Issues](https://github.com/exc
 For questions, please post them on the "**[Issues](https://github.com/excelsior-university-web-systems/droplets/new/choose)**" page by selecting the **Feature request** option.
 
 ---
-&copy; 2018-2024. Ethan Lin, [University of Wisconsin Extended Campus](https://uwex.wisconsin.edu), and [Excelsior University](https://www.excelsior.edu). All rights reserved.
+&copy; 2018-2025. Ethan Lin and [Excelsior University](https://www.excelsior.edu). All rights reserved.
