@@ -29,6 +29,7 @@ module.exports = {
                         options: {
                           // Prefer `dart-sass`
                           implementation: require.resolve('sass'),
+                          api: 'modern'
                         },
                     },
                 ],
