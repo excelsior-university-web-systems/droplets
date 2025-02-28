@@ -1214,11 +1214,6 @@ function enableAnnotation( annotations ) {
 
         const annotationDiv = parentEl.querySelector( '.annotations' );
         const imgPanel = parentEl.querySelector( '.image-container' );
-        const ariaDescribeAttrValue = 'annotation' + ( parentIndex + 1 );
-
-        // add the aria-describedby attribute to link the image to the commentary
-        annotationImgEl.setAttribute( 'aria-describedby', ariaDescribeAttrValue );
-        annotationDiv.setAttribute( 'id', ariaDescribeAttrValue );
 
         const tempImg = new Image();
         tempImg.src = annotationImgEl.src;
@@ -1234,7 +1229,7 @@ function enableAnnotation( annotations ) {
                 // create the div element to hold the indicators
                 const indicatorsDiv = document.createElement( 'div' );
                 indicatorsDiv.classList.add( 'indicators' );
-                indicatorsDiv.setAttribute( 'aria-hidden', 'true' );
+                //indicatorsDiv.setAttribute( 'aria-hidden', 'true' );
 
                 // get indicator position for each annotation
                 const annotationItems = annotationDiv.querySelectorAll( '.annotations .annotation-item' );
@@ -1262,22 +1257,18 @@ function enableAnnotation( annotations ) {
                     
                     const indicatorBtn = document.createElement( 'button' );
                     indicatorBtn.setAttribute( 'data-index', itemIndex );
+                    indicatorBtn.id = cleanString( title ) + '_' + parentIndex + '_' + itemIndex;
                     indicatorBtn.classList.add( 'dot' );
+                    indicatorBtn.innerHTML = '<span class="sr-only">'+ title +'</span>';
+                    indicatorBtn.setAttribute( 'aria-expanded', 'false' );
+                    indicatorBtn.setAttribute( 'aria-haspopup', 'dialog' );
+                    indicatorBtn.setAttribute( 'aria-controls', 'commentary_panel_' + parentIndex + '_' + itemIndex )
 
                     if ( !numbered ) {
                         indicatorBtn.innerHTML = itemIndex + 1;
                     }
 
-                    const tooltip = createAnnotationTooltip( title );
-
-                    if ( xyPos.x < ( imgNaturalWidth / 2 ) ) {
-                        tooltip.classList.add( 'right' );
-                    } else {
-                        tooltip.classList.add( 'left' );
-                    }
-
                     indicatorItem.appendChild( indicatorBtn );
-                    indicatorItem.appendChild( tooltip );
                     indicatorsDiv.appendChild( indicatorItem );
                     
                     // add to annotation array
@@ -1290,6 +1281,41 @@ function enableAnnotation( annotations ) {
                         'title': title,
                         'commentary': commentary
                     } );
+
+                    const mouseOverEvent = ( evt ) => {
+                        if ( evt.target.parentNode.classList.contains( 'active' ) ) {
+                            return false;
+                        }
+
+                        const tooltip = createAnnotationTooltip( title, parentIndex, itemIndex );
+
+                        tooltip.style.top = toPercentage( xyPos.y , imgNaturalHeight ) + '%';
+
+                        if ( xyPos.x < ( imgNaturalWidth / 2 ) ) {
+                            tooltip.classList.add( 'right' );
+                            tooltip.style.left = toPercentage( xyPos.x , imgNaturalWidth ) + '%';
+                        } else {
+                            tooltip.classList.add( 'left' );
+                            tooltip.style.right = 100 - ( toPercentage( xyPos.x , imgNaturalWidth ) ) + '%';
+                        }
+
+                        indicatorBtn.setAttribute( 'aria-describedby', cleanString( title ) + '_' + parentIndex + '_' + itemIndex );
+                        indicatorsDiv.appendChild( tooltip );
+                    };
+
+                    const mouseOutEvent = ( evt ) => {
+                        const tooltip = indicatorsDiv.querySelector( '.tooltip' );
+
+                        if ( tooltip ) {
+                            tooltip.remove();
+                            indicatorBtn.removeAttribute( 'aria-describedby' );
+                        }
+                    };
+
+                    indicatorBtn.addEventListener( 'mouseover', mouseOverEvent, false );
+                    indicatorBtn.addEventListener( 'focus', mouseOverEvent, false );
+                    indicatorBtn.addEventListener( 'mouseout', mouseOutEvent, false );
+                    indicatorBtn.addEventListener( 'focusout', mouseOutEvent, false );
 
                     // add button event listener to indicator buttons
                     indicatorBtn.addEventListener( 'click', ( evt ) => {
@@ -1306,9 +1332,9 @@ function enableAnnotation( annotations ) {
                             commentaryPanel = null;
                             
                             if ( !annotations[btnIndex].noBackdrop ) {
-                                commentaryPanelBackdrop = imgPanel.querySelector( '.commentary-panel-backdrop' );
+                                commentaryPanelBackdrop = indicatorsDiv.querySelector( '.commentary-panel-backdrop' );
                                 commentaryPanelBackdrop.removeEventListener( 'click', closeAnnotationCommentary );
-                                imgPanel.removeChild( commentaryPanelBackdrop );
+                                commentaryPanelBackdrop.remove();
                                 commentaryPanelBackdrop = null;
                             }
 
@@ -1318,24 +1344,32 @@ function enableAnnotation( annotations ) {
                         if ( btn.parentNode.classList.contains( 'active' ) ) {
 
                             btn.parentNode.classList.remove( 'active' );
+                            btn.setAttribute( 'aria-expanded', 'false' );
 
+                            parentEl.querySelectorAll( '.indicators .indicator button' ).forEach( ( button ) => {
+                                button.removeAttribute( 'tabindex' );
+                            } );
+                             
                         } else {
 
                             parentEl.querySelectorAll( '.indicators .indicator' ).forEach( ( indicator ) => {
-                                
-                                if ( indicator.classList.contains( 'active') ) {
-                                    indicator.classList.remove( 'active' );
-                                }
+                                indicator.classList.remove( 'active' );
+                            } );
 
+                            parentEl.querySelectorAll( '.indicators .indicator button' ).forEach( ( button ) => {
+                                button.setAttribute( 'aria-expanded', 'false' );
+                                button.setAttribute( 'tabindex', '-1' );
                             } );
 
                             btn.parentNode.classList.add( 'active' );
+                            btn.setAttribute( 'aria-expanded', 'true' );
+                            btn.removeAttribute( 'tabindex' );
 
-                            const commentaryPanelEl = createAnnotationCommentaryPanel( annotations[btnIndex], btnIndex );
+                            const commentaryPanelEl = createAnnotationCommentaryPanel( annotations[btnIndex], parentIndex, btnIndex );
 
                             if ( !annotations[btnIndex].noBackdrop ) {
                                 commentaryPanelBackdrop = commentaryPanelEl[0];
-                                imgPanel.appendChild( commentaryPanelBackdrop );
+                                indicatorsDiv.appendChild( commentaryPanelBackdrop );
                             }
 
                             commentaryPanel = commentaryPanelEl[1];
@@ -1350,6 +1384,7 @@ function enableAnnotation( annotations ) {
                             const gutter = 10;
 
                             commentaryPanel.style.top = toPercentage( baseTop - commentaryPanel.offsetHeight / 2, imgClientHeight ) + '%';
+                            commentaryPanel.focus();
 
                             switch ( direction ) {
                                 case 'top':
@@ -1757,6 +1792,10 @@ function enableSlideshow( slideshow ) {
   MISC. DROPLETS HELPER FUNCTIONS
 **********************************************************/
 
+function cleanString( input ) {
+    return input.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+}
+
 /**
  * Helper function to check if string is empty or undefined
  * @function isEmpty
@@ -1784,13 +1823,17 @@ function toPercentage( numerator, denominator ) {
  * Helper function to create annotation tooltip
  * @function createAnnotationTooltip
  * @param {String} title - a string.
+ * @param {Number} parentIndex - a number.
+ * @param {Number} itemIndex - a number.
  * @return {Node}
  * @since 3.1.0
  */
- function createAnnotationTooltip( title ) {
+ function createAnnotationTooltip( title, parentIndex, itemIndex ) {
 
     const tooltip = document.createElement( 'div' );
+    tooltip.id = cleanString( title ) + '_' + parentIndex + '_' + itemIndex;
     tooltip.classList.add( 'tooltip' );
+    tooltip.setAttribute( 'role', 'tooltip' );
 
     const tpTitle = document.createElement( 'div' );
     tpTitle.classList.add( 'title' );
@@ -1814,7 +1857,7 @@ function toPercentage( numerator, denominator ) {
  * @return {Node}
  * @since 3.1.0
  */
-function createAnnotationCommentaryPanel( annotation, index ) {
+function createAnnotationCommentaryPanel( annotation, parentIndex, index ) {
 
     let backdrop = null;
 
@@ -1825,6 +1868,7 @@ function createAnnotationCommentaryPanel( annotation, index ) {
     }
     
     const panel = document.createElement( 'div' );
+    panel.id = 'commentary_panel_' + parentIndex + '_' + index;
     panel.classList.add( 'commentary-panel' );
 
     if ( annotation.direction ) {
@@ -1832,7 +1876,8 @@ function createAnnotationCommentaryPanel( annotation, index ) {
     }
 
     panel.setAttribute( 'data-index', index );
-    panel.setAttribute( 'aria-hidden', 'true' );
+    panel.setAttribute( 'role', 'dialog' );
+    panel.setAttribute( 'aria-labelledby', cleanString(annotation.title) + '_' + parentIndex + '_' + index );
 
     const closeBtn = document.createElement( 'button' );
     closeBtn.classList.add( 'closeBtn' );
@@ -1929,33 +1974,56 @@ function createAnnotationCommentaryPanel( annotation, index ) {
 
  function closeAnnotationCommentary( evt ) {
 
-    let parentEl = evt.target.parentNode.parentNode;
-    let siblingEl = evt.currentTarget.parentNode.previousSibling;
-    let siblingTargetEl = evt.target.parentNode.previousSibling;
-    let targetEl = evt.target.parentNode;
-    
-    if ( evt.target.classList.contains( 'commentary-panel-backdrop' ) ) {
-        parentEl = evt.target.parentNode;
-        siblingEl = evt.currentTarget.nextSibling.querySelector( '.closeBtn' );
-        siblingTargetEl = evt.target.nextSibling;
-        targetEl = evt.target;
-    }
+    let parentEl = evt.target.closest( '.droplets-annotation' );
+    let targetEl = evt.target;
+    let closedTargetId;
+    const containsBackdrop = targetEl.classList.contains( 'commentary-panel-backdrop' );
 
-    parentEl.querySelectorAll( '.indicators .indicator' ).forEach( ( indicator ) => {
-                                
+    parentEl.querySelectorAll( '.indicator' ).forEach( ( indicator ) => {
+
+        const button = indicator.querySelector( 'button' );
+
         if ( indicator.classList.contains( 'active') ) {
-            indicator.classList.remove( 'active' );
+            closedTargetId = button.id;
         }
 
+        indicator.classList.remove( 'active' );
+        
+        button.setAttribute( 'aria-expanded', 'false' );
+        button.removeAttribute( 'tabindex' );
     } );
 
-    if ( !parentEl.parentNode.classList.contains( 'no-backdrop' ) ) {
-        siblingEl.removeEventListener( 'click', closeAnnotationCommentary );
-        parentEl.removeChild( siblingTargetEl );
+    targetEl.removeEventListener( 'click', closeAnnotationCommentary );
+
+    if ( !parentEl.classList.contains( 'no-backdrop' ) ) {
+
+        let siblingEl;
+
+        if ( containsBackdrop ) {
+
+            siblingEl = evt.currentTarget.parentNode.nextSibling.querySelector( '.closeBtn' );
+            siblingEl.removeEventListener( 'click', closeAnnotationCommentary );
+            siblingEl.parentNode.remove();
+            targetEl.remove();
+            
+        } else {
+
+            siblingEl = evt.target.parentNode.previousSibling.querySelector( '.commentary-panel-backdrop' );
+            siblingEl.removeEventListener( 'click', closeAnnotationCommentary );
+            siblingEl.remove();
+            targetEl.parentNode.remove();
+            
+        }
+
+    } else {
+
+        targetEl.parentNode.remove();
+        
     }
 
-    evt.currentTarget.removeEventListener( 'click', closeAnnotationCommentary );
-    parentEl.removeChild( targetEl );
+    if ( closedTargetId ) {
+        parentEl.querySelector( '#' + closedTargetId ).focus();
+    }
 
     evt.preventDefault();
     return false;
