@@ -11,10 +11,10 @@ module.exports = merge( common, {
       banner: `DROPLETS
 @version: ${require('./package.json').version}
 @author: Ethan Lin
-@updated on: 11-08-2023
+@updated on: 03-28-2025
 @url: https://github.com/excelsior-university-web-systems/droplets
 @license: The MIT License (MIT)
-@copyright: (c) 2018-${new Date().getUTCFullYear()} University of Wisconsin Extended Campus and Excelsior University`,
+@copyright: (c) 2018-${new Date().getUTCFullYear()} Ethan Lin`,
       entryOnly: true
     } ),
   ],

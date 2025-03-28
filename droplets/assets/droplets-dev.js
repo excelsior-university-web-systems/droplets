@@ -1204,9 +1204,12 @@ function enableResources( resources ) {
  */
 function enableAnnotation( annotations ) {
 
+    const mainContainer = document.querySelector( '#uws-droplets-page' );
+
     Array.prototype.forEach.call( annotations, function( parentEl, parentIndex ) {
 
         const numbered = parentEl.classList.contains( 'unnumber' );
+        const unfloat = parentEl.classList.contains( 'unfloat' );
         const noBackdrop = parentEl.classList.contains( 'no-backdrop' );
         const annotationImgEl = parentEl.querySelector( 'img' );
         let imgNaturalWidth = parentEl.width;
@@ -1220,8 +1223,15 @@ function enableAnnotation( annotations ) {
 
         tempImg.addEventListener( 'load', function() {
 
+            let scaleFactor = 1;
             imgNaturalWidth = annotationImgEl.naturalWidth;
             imgNaturalHeight = annotationImgEl.naturalHeight;
+
+            if ( imgNaturalWidth > mainContainer.offsetWidth ) {
+                scaleFactor = mainContainer.offsetWidth / imgNaturalWidth;
+                imgNaturalWidth = mainContainer.offsetWidth;
+                imgNaturalHeight = imgNaturalHeight * scaleFactor;
+            }
 
             // check image size and then set position indicators
             if ( imgNaturalWidth >= 640 && imgNaturalHeight >= 360 ) {
@@ -1245,8 +1255,8 @@ function enableAnnotation( annotations ) {
                     const direction = item.querySelector( '.commentary' ).getAttribute( 'data-direction' );
                     const xyRaw = position.split( ',', 2 );
                     const xyPos = {
-                        'x': Number( xyRaw[0].trim() ),
-                        'y': Number( xyRaw[1].trim() )
+                        'x': Number( xyRaw[0].trim() ) * scaleFactor,
+                        'y': Number( xyRaw[1].trim() ) * scaleFactor
                     };
 
                     // create and display indicator for currrent annotation item
@@ -1375,45 +1385,58 @@ function enableAnnotation( annotations ) {
                             commentaryPanel = commentaryPanelEl[1];
                             imgPanel.appendChild( commentaryPanel );
 
-                            const imgClientWidth = annotationImgEl.clientWidth;
-                            const imgClientHeight = annotationImgEl.clientHeight;
-                            const leftPercentage = toPercentage( xyPos.x , imgNaturalWidth );
-                            const topPercentage = toPercentage( xyPos.y , imgNaturalHeight );
-                            const baseLeft = leftPercentage / 100 * imgClientWidth;
-                            const baseTop = topPercentage / 100 * imgClientHeight;
-                            const gutter = 10;
+                            if ( !unfloat ) {
 
-                            commentaryPanel.style.top = toPercentage( baseTop - commentaryPanel.offsetHeight / 2, imgClientHeight ) + '%';
-                            commentaryPanel.focus();
+                                const imgClientWidth = annotationImgEl.clientWidth;
+                                const imgClientHeight = annotationImgEl.clientHeight;
+                                const leftPercentage = toPercentage( xyPos.x , imgNaturalWidth );
+                                const topPercentage = toPercentage( xyPos.y , imgNaturalHeight );
+                                const baseLeft = leftPercentage / 100 * imgClientWidth;
+                                const baseTop = topPercentage / 100 * imgClientHeight;
+                                const gutter = 10;
 
-                            switch ( direction ) {
-                                case 'top':
-                                    commentaryPanel.style.top = toPercentage( baseTop - commentaryPanel.offsetHeight - gutter, imgClientHeight ) + '%';
-                                    commentaryPanel.style.left = toPercentage( baseLeft - commentaryPanel.offsetWidth / 2, imgClientWidth ) + '%';
-                                    break;
-                                case 'left':
-                                    commentaryPanel.style.left = 'unset';
-                                    commentaryPanel.style.right = ( 100 - toPercentage( baseLeft - gutter, imgClientWidth ) ) + '%';
-                                    break;
-                                case 'right':
-                                    commentaryPanel.style.left = toPercentage( baseLeft + gutter, imgClientWidth ) + '%';
-                                    break;
-                                case 'bottom':
-                                    commentaryPanel.style.top = toPercentage( baseTop + gutter, imgClientHeight ) + '%';
-                                    commentaryPanel.style.left = toPercentage( baseLeft - commentaryPanel.offsetWidth / 2, imgClientWidth ) + '%';
-                                    break;
-                                default:
-                                    if ( xyPos.x < imgClientWidth / 2 ) {
-                                        commentaryPanel.classList.add( 'right' );
-                                        commentaryPanel.style.left = toPercentage( baseLeft + gutter, imgClientWidth ) + '%';
-                                    } else {
-                                        commentaryPanel.classList.add( 'left' );
+                                commentaryPanel.style.top = toPercentage( baseTop - commentaryPanel.offsetHeight / 2, imgClientHeight ) + '%';
+                                document.activeElement.blur();
+                                commentaryPanel.focus();
+
+                                switch ( direction ) {
+                                    case 'top':
+                                        commentaryPanel.style.top = toPercentage( baseTop - commentaryPanel.offsetHeight - gutter, imgClientHeight ) + '%';
+                                        commentaryPanel.style.left = toPercentage( baseLeft - commentaryPanel.offsetWidth / 2, imgClientWidth ) + '%';
+                                        break;
+                                    case 'left':
                                         commentaryPanel.style.left = 'unset';
                                         commentaryPanel.style.right = ( 100 - toPercentage( baseLeft - gutter, imgClientWidth ) ) + '%';
-                                    }
-                                    break;
-                            }
+                                        break;
+                                    case 'right':
+                                        commentaryPanel.style.left = toPercentage( baseLeft + gutter, imgClientWidth ) + '%';
+                                        break;
+                                    case 'bottom':
+                                        commentaryPanel.style.top = toPercentage( baseTop + gutter, imgClientHeight ) + '%';
+                                        commentaryPanel.style.left = toPercentage( baseLeft - commentaryPanel.offsetWidth / 2, imgClientWidth ) + '%';
+                                        break;
+                                    default:
+                                        if ( xyPos.x < imgClientWidth / 2 ) {
+                                            commentaryPanel.classList.add( 'right' );
+                                            commentaryPanel.style.left = toPercentage( baseLeft + gutter, imgClientWidth ) + '%';
+                                        } else {
+                                            commentaryPanel.classList.add( 'left' );
+                                            commentaryPanel.style.left = 'unset';
+                                            commentaryPanel.style.right = ( 100 - toPercentage( baseLeft - gutter, imgClientWidth ) ) + '%';
+                                        }
+                                        break;
+                                }
 
+                            } else {
+
+                                if ( xyPos.x < ( imgNaturalWidth / 2 ) ) {
+                                    commentaryPanel.classList.add( 'right' );
+                                } else {
+                                    commentaryPanel.classList.add( 'left' );
+                                }
+
+                            }
+                            
                         }
 
                     } );
@@ -2022,6 +2045,7 @@ function createAnnotationCommentaryPanel( annotation, parentIndex, index ) {
     }
 
     if ( closedTargetId ) {
+        document.activeElement.blur();
         parentEl.querySelector( '#' + closedTargetId ).focus();
     }
 

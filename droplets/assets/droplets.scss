@@ -28,8 +28,8 @@
  25. SLIDE SHOW ----------------------------------------------------------- D025
  26. SPEAK ---------------------------------------------------------------- D026
  27. CARDS (LAYOUT)  ------------------------------------------------------ D027
- 28. FOR PRINTING --------------------------------------------------------- D028
- 29. FOOTER --------------------------------------------------------------- D029
+ 28. UTILITIES  ----------------------------------------------------------- D028
+ 29. FOR PRINTING --------------------------------------------------------- D029
  30. FONT FACES ----------------------------------------------------------- D030
  31. CANVAS.NET ADJUSTMENTS ----------------------------------------------- D031
  32. NO JS FALLBACK ------------------------------------------------------- D032
@@ -3830,6 +3830,54 @@ Droplets page container. Droplets classes only work inside this container.
 
         }
 
+        &.unnumber {
+
+            .commentary-panel {
+
+                .head {
+                    .number {
+                        display: none;
+                    }
+                }
+    
+            }
+
+        }
+
+        &.unfloat {
+
+            .commentary-panel {
+
+                display: flex;
+                flex-direction: column;
+                width: 35%;
+                height: 90%;
+                top: 5%;
+                
+                &.left {
+                    left: 5%;
+                    right: unset;
+                }
+
+                &.right {
+                    left: unset;
+                    right: 5%;
+                }
+    
+                .body { 
+                    flex: 1;
+                    max-height: unset;
+                }
+
+                &:after,
+                &:before {
+                    display: none !important; 
+                }
+    
+            }
+
+        }
+
         .commentary-panel.left {
 
             transform: translate(-5%, 0%);
@@ -4278,7 +4326,27 @@ Droplets page container. Droplets classes only work inside this container.
     }
 
     /*
-    D028: FOR PRINTING
+    D028: UTILITIES
+    --------------------------------------------------------------------------*/
+
+    .m-0 {
+        margin: 0 !important;
+    }
+
+    .mt-1 {
+        margin-top: rem-unit( $margin-spacing ) !important;
+    }
+
+    .mb-1 {
+        margin-bottom: rem-unit( $margin-spacing ) !important;
+    }
+
+    .m-1 {
+        margin: rem-unit( $margin-spacing ) 0 !important;
+    }
+
+    /*
+    D029: FOR PRINTING
     --------------------------------------------------------------------------*/
 
     @media print {
@@ -4672,26 +4740,6 @@ Droplets page container. Droplets classes only work inside this container.
     }
     
 } // end page container
-
-/*
-D029: Footer
---------------------------------------------------------------------------------
-A line and some spaces beneath.
------------------------------------------------------------------------------ */
-
-// #uws-droplets-page {
-
-//     &:after {
-//         display: block;
-//         border-top: rem-unit( 1px ) solid $border-color;
-//         margin: rem-unit( $gutter ) 0 0 0;
-//         padding: rem-unit( $gutter) 0;
-//         color: $gray-color;
-//         font-size: rem-unit( 12px );
-//         content: " ";
-//     }
-
-// }
 
 /*
 D030: FONT FACES
