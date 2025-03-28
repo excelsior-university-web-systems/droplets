@@ -1285,6 +1285,7 @@ function enableAnnotation( annotations ) {
                     annotations.push( {
                         'number': itemIndex + 1,
                         'unnumber': numbered,
+                        'unfloat': unfloat,
                         'noBackdrop': noBackdrop,
                         'position': position,
                         'direction': direction,
@@ -1894,7 +1895,7 @@ function createAnnotationCommentaryPanel( annotation, parentIndex, index ) {
     panel.id = 'commentary_panel_' + parentIndex + '_' + index;
     panel.classList.add( 'commentary-panel' );
 
-    if ( annotation.direction ) {
+    if ( !annotation.unfloat && annotation.direction ) {
         panel.classList.add( annotation.direction );
     }
 
